@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Asteroid extends VectorObject {
-    
+
     private float falling;
 
     public Asteroid(Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
@@ -31,12 +31,15 @@ public class Asteroid extends VectorObject {
 
     }
 
-
-
     @Override
     public void updateWorld(float delta, Matrix3x3f viewport, float width, float height) {
-        
-        ty -= (falling += Math.pow(9.80665f, 2) * delta);
+        //Setting a "terminal velocity"
+        if (ty > 5000) {
+            //Estimate of gravities acceleration
+            ty -= (falling += Math.pow(9.80665f, 2) * delta);
+        } else {
+            ty -= falling;
+        }
         System.out.printf("Falling %f\n", falling);
         System.out.printf("ty %f", ty);
         Matrix3x3f mat = Matrix3x3f.translate(0.0f, ty);
