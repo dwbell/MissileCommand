@@ -34,7 +34,9 @@ public class MissileCommand extends SimpleFramework {
     protected void initialize() {
         super.initialize();
         //asteroid = new Asteroid(getViewportTransform(), mouse, null);
-        asteroids.add(new Asteroid(getViewportTransform(), mouse, null));
+        for (int i = 0; i < 100; i++) {
+            asteroids.add(new Asteroid(getViewportTransform(), mouse, null));
+        }
     }
 
     public void disableCursor() {

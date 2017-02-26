@@ -14,7 +14,6 @@ public class MouseCursor extends VectorObject {
     }
 
     private void initialize() {
-
         //Crosshair cursor
         this.polygon = new Vector2f[]{new Vector2f(-5, 0), new Vector2f(0, 0), new Vector2f(0, -5),
             new Vector2f(0, 0), new Vector2f(5, 0), new Vector2f(0, 0), new Vector2f(0, 5)};
@@ -28,11 +27,10 @@ public class MouseCursor extends VectorObject {
         this.ty = m.y;
         System.out.println(m.x);
         System.out.println(m.y);
-
     }
 
     @Override
-    public void updateWorld(Matrix3x3f viewport) {
+    public void updateWorld(float delta, Matrix3x3f viewport, float width, float height) {
         this.viewport = viewport;
     }
 
