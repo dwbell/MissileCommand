@@ -8,7 +8,9 @@ public abstract class VectorObject {
     protected Matrix3x3f world;                            //Objects transformation matrix
     protected Matrix3x3f viewport;                     //Viewport scaling matrix
     protected int maxSpawn;                                //Accounting for size of asteriods
-    protected  int minSpawn;                                //Accounting for size of asteroids
+    protected int minSpawn;                                //Accounting for size of asteroids
+    protected int spawnX;                                       //X value for starting spawn location
+    protected int spawnY;                                        //Y value for starting spawn location
     protected int width;                                           //Screen width
     protected int height;                                         //Screen height
     protected Vector2f velocity;                           //Vector for velocity
@@ -19,7 +21,9 @@ public abstract class VectorObject {
     protected float rot;                                            //Rotation
     protected float rotStep;                                  //Rotation Steps
 
-    public VectorObject(Matrix3x3f viewport,RelativeMouseInput mouse, KeyboardInput keyboard) {
+    public VectorObject(int spawnX, int spawnY, Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
+        this.spawnX = spawnX;
+        this.spawnY = spawnY;
         this.viewport = viewport;
         this.mouse = mouse;
         this.keyboard = keyboard;
@@ -29,7 +33,7 @@ public abstract class VectorObject {
 
     public abstract void processInput(Vector2f m);
 
-    public abstract void updateWorld(float delta, Matrix3x3f viewport, float width, float height);
+    public abstract void updateObjects(float delta, Matrix3x3f viewport, float width, float height);
 
     public abstract void render(Graphics g);
 

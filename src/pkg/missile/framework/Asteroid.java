@@ -5,13 +5,13 @@ import java.awt.Graphics;
 
 public class Asteroid extends VectorObject {
 
-    private float falling;
-    private int spawn;
+    private float falling;      //Holds  -9.8m/s^2 to terminal velocity values
+    private boolean isAlive;    //Is it alive?
 
-    public Asteroid(Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
-        super(viewport, mouse, keyboard);
+    public Asteroid(int spawnX, int spawnY, Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
+        super(spawnX, spawnY, viewport, mouse, keyboard);
         this.falling = 0;
-        spawn = minSpawn + (int) (Math.random() * ((maxSpawn - minSpawn) + 1));
+        this.isAlive = true;
 
         initialize();
     }
@@ -21,8 +21,8 @@ public class Asteroid extends VectorObject {
         polygon = new Vector2f[]{new Vector2f(400, -800), new Vector2f(-400, -800), new Vector2f(-800, -400),
             new Vector2f(-800, 400), new Vector2f(-400, 800), new Vector2f(400, 800), new Vector2f(800, 400), new Vector2f(800, -400)};
         //Translation variables
-        this.tx = spawn;
-        this.ty = 16000;    //Start above screen to gain momentum
+        this.tx = spawnX;
+        this.ty = spawnY;    //Start above screen to gain momentum
         this.velocity = new Vector2f();
 
         //World initialize
@@ -36,14 +36,17 @@ public class Asteroid extends VectorObject {
     }
 
     @Override
-    public void updateWorld(float delta, Matrix3x3f viewport, float width, float height) {
-        tx = spawn;
-        //Setting a "terminal velocity"
+    public void updateObjects(float delta, Matrix3x3f viewport, float width, float height) {
+        //Setting a "fake terminal velocity"
         if (ty > 4000) {
             //Estimate of gravities acceleration
             ty -= (falling += Math.pow(9.80665f, 2) * delta);
         } else {
             ty -= falling;
+        }
+
+        if (ty < (-1 * (height / 2))) {
+            this.isAlive = false;
         }
 
         Matrix3x3f mat = Matrix3x3f.translate(tx, ty);
@@ -65,5 +68,9 @@ public class Asteroid extends VectorObject {
             g.drawLine((int) S.x, (int) S.y, (int) P.x, (int) P.y);
             S = P;
         }
+    }
+
+    public boolean isAlive() {
+        return this.isAlive;
     }
 }

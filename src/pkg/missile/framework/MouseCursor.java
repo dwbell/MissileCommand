@@ -7,8 +7,8 @@ public class MouseCursor extends VectorObject {
 
     private Vector2f[] polycpy;
 
-    public MouseCursor(Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
-        super(viewport, mouse, keyboard);
+    public MouseCursor(int spawnX, int spawnY, Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
+        super(spawnX, spawnY, viewport, mouse, keyboard);
         initialize();
 
     }
@@ -30,7 +30,7 @@ public class MouseCursor extends VectorObject {
     }
 
     @Override
-    public void updateWorld(float delta, Matrix3x3f viewport, float width, float height) {
+    public void updateObjects(float delta, Matrix3x3f viewport, float width, float height) {
         this.viewport = viewport;
     }
 
