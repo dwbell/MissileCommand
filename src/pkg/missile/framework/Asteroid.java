@@ -6,11 +6,12 @@ import java.awt.Graphics;
 public class Asteroid extends VectorObject {
 
     private float falling;
-    private int spawn; //random
+    private int spawn;
 
     public Asteroid(Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
         super(viewport, mouse, keyboard);
         this.falling = 0;
+        spawn = minSpawn + (int) (Math.random() * ((maxSpawn - minSpawn) + 1));
 
         initialize();
     }
@@ -36,10 +37,9 @@ public class Asteroid extends VectorObject {
 
     @Override
     public void updateWorld(float delta, Matrix3x3f viewport, float width, float height) {
-        
         tx = spawn;
         //Setting a "terminal velocity"
-        if (ty > 5000) {
+        if (ty > 4000) {
             //Estimate of gravities acceleration
             ty -= (falling += Math.pow(9.80665f, 2) * delta);
         } else {

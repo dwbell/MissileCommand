@@ -34,9 +34,10 @@ public class MissileCommand extends SimpleFramework {
     protected void initialize() {
         super.initialize();
         //asteroid = new Asteroid(getViewportTransform(), mouse, null);
-        for (int i = 0; i < 100; i++) {
-            asteroids.add(new Asteroid(getViewportTransform(), mouse, null));
-        }
+
+        //Single asteroid initialization
+        asteroids.add(new Asteroid(getViewportTransform(), mouse, null));
+
     }
 
     public void disableCursor() {
@@ -58,13 +59,23 @@ public class MissileCommand extends SimpleFramework {
         }
     }
 
+    private double time = 0;
+
     @Override
     protected void updateObjects(float delta) {
-        super.updateObjects(delta);
         //mouseCursor.updateWorld(getViewportTransform());
+        asteroidsUpdate(delta);
 
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).updateWorld(delta, getViewportTransform(), appWorldWidth, appWorldHeight);
+        }
+    }
+
+    public void asteroidsUpdate(float delta) {
+        time += delta;
+        if (time > 2.0d) {
+            asteroids.add(new Asteroid(getViewportTransform(), mouse, null));
+            time = 0;
         }
 
     }
