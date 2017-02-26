@@ -54,7 +54,6 @@ public class MissileCommand extends SimpleFramework {
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).processInput(getWorldMousePosition());
         }
-
     }
 
     @Override
@@ -63,7 +62,7 @@ public class MissileCommand extends SimpleFramework {
         //mouseCursor.updateWorld(getViewportTransform());
 
         for (int i = 0; i < asteroids.size(); i++) {
-            asteroids.get(i).updateWorld(getViewportTransform());
+            asteroids.get(i).updateWorld(delta, getViewportTransform(), appWorldWidth, appWorldHeight);
         }
 
     }
