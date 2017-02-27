@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 public class Asteroid extends VectorObject {
 
-    private float falling;      //Holds  -9.8m/s^2 to terminal velocity values
+    private float falling;            //Holds  -9.8m/s^2 to terminal velocity values
     private boolean isAlive;    //Is it alive?
 
     public Asteroid(int spawnX, int spawnY, Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
@@ -39,7 +39,7 @@ public class Asteroid extends VectorObject {
     public void updateObjects(float delta, Matrix3x3f viewport, float width, float height) {
         //Setting a "fake terminal velocity"
         if (ty > 4000) {
-            //Estimate of gravities acceleration
+            //Acceleration of gravity
             ty -= (falling += Math.pow(9.80665f, 2) * delta);
         } else {
             ty -= falling;
@@ -68,6 +68,11 @@ public class Asteroid extends VectorObject {
             g.drawLine((int) S.x, (int) S.y, (int) P.x, (int) P.y);
             S = P;
         }
+    }
+
+    public void setWind(float wind) {
+        this.tx += wind;
+        System.out.println(tx);
     }
 
     public boolean isAlive() {

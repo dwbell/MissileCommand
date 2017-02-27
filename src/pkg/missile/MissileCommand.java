@@ -8,16 +8,22 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.util.ArrayList;
-import java.util.Random;
 import pkg.missile.framework.*;
 
 public class MissileCommand extends SimpleFramework {
 
-    private double timer;
-    private double spawnTimer;
-    private ArrayList<Asteroid> asteroids = new ArrayList<>();
+    /*Asteroids variables*/
+    private double astTimer;                                                                         //Adds nanoseconds from delta to accumlate real time
+    private final double SPAWN_TIMER = 2.0d;                                       //Spawn every ~2 seconds to start
+    private final double SPAWN_TIMER_CAP = .3d;                               //Cap set to spawn at ~.28 seconds
+    private final double SPAWN_DECREMENT = .04d;                          //Spawn time decrement
+    private double spawnTimer;                                                                 //Current interval between each new asteroid spawn
+    private ArrayList<Asteroid> asteroids = new ArrayList<>();      //Container for all asteroids
 
-    //  private static VectorObject asteroid;
+    /*Wind variables*/
+    private float wind;                                                                                    //Holds current wind status
+    private double windTimer;                                                                  //Adds nanoseconds from delta to accumlate real time
+
     public MissileCommand() {
         appBackground = Color.WHITE;
         appBorder = Color.LIGHT_GRAY;
@@ -29,18 +35,17 @@ public class MissileCommand extends SimpleFramework {
         appMaintainRatio = true;
         appSleep = 10L;
         appTitle = "Missile Command";
-        appWorldWidth = 53000.0f;   //Maintain wide aspect ratio for satellite orbit
-        appWorldHeight = 30000f;    //Meters to typical satellite orbit
+        appWorldWidth = 53000.0f;   //Maintain wide aspect ratio w.r.t. satellite orbit altitude
+        appWorldHeight = 30000f;    //Meters to typical satellite orbit (~300 km)
     }
 
     @Override
     protected void initialize() {
         super.initialize();
-
-        //Single asteroid for initialization
-        timer = 0.0d;
-        //Set to spawn a new asteroid every ~2 seconds intially
-        spawnTimer = 2.0d;
+        astTimer = 0.0d;
+        windTimer = 0.0d;
+        spawnTimer = SPAWN_TIMER;
+        this.wind = 0.0f;
 
     }
 
@@ -66,34 +71,46 @@ public class MissileCommand extends SimpleFramework {
     @Override
     protected void updateObjects(float delta) {
         //mouseCursor.updateWorld(getViewportTransform());
+        
         asteroidsUpdate(delta);
 
     }
 
     public void asteroidsUpdate(float delta) {
         //Timer to hold clock information
-        timer += delta;
+        astTimer += delta;
         //Check if appropiate amount of time has passed
-        if (timer > spawnTimer) {
+        if (astTimer > spawnTimer) {
             //Setting asteroid spawn points, within screen bounds and accounting for asteroid size
             int spawnX = (int) (-1 * (appWorldWidth / 2) + 800) + (int) (Math.random() * ((appWorldWidth / 2 - 800) - (-1 * (appWorldWidth / 2) + 800) + 1));
             int spawnY = (int) (appWorldHeight / 2) + 1000;
             //Add asteroid with new random spawn point
             asteroids.add(new Asteroid(spawnX, spawnY, getViewportTransform(), mouse, null));
             //Reset timer to 0, to wait for next interval
-            timer = 0;
+            astTimer = 0;
             //Increase asteroid spawn times, and sets a cap
-            if (spawnTimer > .28d) {
-                spawnTimer -= .03;
+            if (spawnTimer > SPAWN_TIMER_CAP) {
+                spawnTimer -= SPAWN_DECREMENT;
             }
         }
-        System.out.println(spawnTimer);
+
+        //Timer to hold clock information
+        windTimer += delta;
+        //Check if appropiate amount of time has passed (~15 seconds)
+        if (windTimer > 15.0d) {
+            //Setting wind to a random number between -30 and 30 inclusive
+            wind = (float) (-1 * (30)) + (float) (Math.random() * ((30) - (-1 * (30)) + 1));
+            //Reset timer and wait for next interval
+            windTimer = 0;
+        }
 
         //Loop through all asteroids and update them accordingly
         for (int i = 0; i < asteroids.size(); i++) {
+            //Update all asteroid with world information
             asteroids.get(i).updateObjects(delta, getViewportTransform(), appWorldWidth, appWorldHeight);
-
-            //Remove asteroids past bottom of screen
+            //Set wind on asteroids
+            asteroids.get(i).setWind(wind);
+            //Remove asteroids past bottom of viewport
             if (!asteroids.get(i).isAlive()) {
                 asteroids.remove(i);
             }
@@ -103,8 +120,10 @@ public class MissileCommand extends SimpleFramework {
     @Override
     protected void render(Graphics g) {
         super.render(g);
-        //mouseCursor.render(g);
 
+        g.drawString("Wind: " + String.valueOf(wind), 20, 40);
+
+        //mouseCursor.render(g);
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).render(g);
         }
