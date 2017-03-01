@@ -25,7 +25,7 @@ public class MissileCommand extends SimpleFramework {
     /*Asteroids variables*/
     private double astTimer;                                                                         //Adds nanoseconds from delta to accumlate real time
     private final double SPAWN_TIMER = 2.0d;                                       //Spawn every ~2 seconds to start
-    private final double SPAWN_TIMER_CAP = .5d;                               //Cap set to spawn at ~.28 seconds
+    private final double SPAWN_TIMER_CAP = .4d;                               //Cap set to spawn at ~.28 seconds
     private final double SPAWN_DECREMENT = .04d;                          //Spawn time decrement
     private final float WIND_SPEED = 30.0f;                                              //Maximum wind change
     private double spawnTimer;                                                                 //Current interval between each new asteroid spawn
@@ -41,7 +41,7 @@ public class MissileCommand extends SimpleFramework {
     private double windTimer;                                                                   //Adds nanoseconds from delta to accumlate real time
 
     /*Mouse Cursor*/
-    private MouseCursor crossHair;                                                      //Mouse cursor change
+    private MouseCursor crossHair;                                                       //Mouse cursor change
 
     /*City Buildings*/
     private ArrayList<Building> buildings = new ArrayList<>();
