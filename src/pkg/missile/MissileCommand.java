@@ -26,7 +26,7 @@ public class MissileCommand extends SimpleFramework {
     private double windTimer;                                                                   //Adds nanoseconds from delta to accumlate real time
 
     public MissileCommand() {
-        appBackground = Color.WHITE;
+        appBackground = Color.BLACK;
         appBorder = Color.LIGHT_GRAY;
         appFont = new Font("Courier New", Font.PLAIN, 14);
         appBorderScale = .95f;
@@ -77,11 +77,7 @@ public class MissileCommand extends SimpleFramework {
 
     }
 
-    /*
-    Name: 
-    Param: 
-    Desc: 
-    */
+
     public void asteroidsUpdate(float delta) {
         //Timer to hold clock information
         astTimer += delta;
@@ -93,7 +89,7 @@ public class MissileCommand extends SimpleFramework {
             for (int i = 0; i < (rng); i++) {
                 //Setting asteroid spawn points, within screen bounds and accounting for asteroid size
                 int spawnX = (int) (-1 * (appWorldWidth / 2) + 800) + (int) (Math.random() * ((appWorldWidth / 2 - 800) - (-1 * (appWorldWidth / 2) + 800) + 1));
-                int spawnY = (int) (appWorldHeight / 2) + 1000;
+                int spawnY = (int)(appWorldHeight / 2) + (900 + (int)(Math.random() * ((5500 - 900) + 1)));
                 //Add asteroid with new random spawn point
                 asteroids.add(new Asteroid(spawnX, spawnY, getViewportTransform(), mouse, null));
             }
@@ -110,7 +106,7 @@ public class MissileCommand extends SimpleFramework {
         //Check if appropiate amount of time has passed (~15 seconds)
         if (windTimer > 15.0d) {
             //Setting wind to a random number between -30 and 30 inclusive
-            wind = (float) (-1 * (WIND_SPEED)) + (float) (Math.random() * ((WIND_SPEED) - (-1 * (WIND_SPEED)) + 1));
+            wind = (float) (-1 * (WIND_SPEED)) + (float) (Math.random() * ((WIND_SPEED) - (-1 * (WIND_SPEED)) + 1));;
             //Reset timer and wait for next interval
             windTimer = 0;
         }
@@ -131,7 +127,8 @@ public class MissileCommand extends SimpleFramework {
     @Override
     protected void render(Graphics g) {
         super.render(g);
-
+        
+        g.setColor(Color.GREEN);
         String w = String.format("%.2f", wind);
         g.drawString("Wind: " + w, 20, 20);
 

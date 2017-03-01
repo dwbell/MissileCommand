@@ -6,10 +6,10 @@ import java.awt.event.MouseEvent;
 
 public class Asteroid extends VectorObject {
 
-    private float falling;                                  //Holds  -9.8m/s^2 to terminal velocity values
-    private boolean isAlive;                          //Is it alive?
-    private int distFallen;                              //Distance fallen
-    private final int TERMINAL_V = 11000;   //Terminal velocity 
+    private float falling;                                       //Holds  -9.8m/s^2 to terminal velocity values
+    private boolean isAlive;                                //Is it alive?
+    private int distFallen;                                   //Distance fallen
+    private final int TERMINAL_V = 11000;    //Terminal velocity 
 
     public Asteroid(int spawnX, int spawnY, Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
         super(spawnX, spawnY, viewport, mouse, keyboard);
@@ -74,7 +74,7 @@ public class Asteroid extends VectorObject {
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.BLUE);
+        g.setColor(Color.GREEN);
         Vector2f S = world.mul(polygon[polygon.length - 1]);
         Vector2f P = null;
         for (int i = 0; i < polygon.length; ++i) {
