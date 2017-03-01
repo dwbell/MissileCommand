@@ -7,11 +7,15 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import pkg.missile.framework.*;
 
 public class MissileCommand extends SimpleFramework {
 
+    /*Game over?*/
+    private boolean gameOver;
+    /*Score variable*/
     private int score = 0;
 
     /*Asteroids variables*/
@@ -23,12 +27,17 @@ public class MissileCommand extends SimpleFramework {
     private double spawnTimer;                                                                 //Current interval between each new asteroid spawn
     private ArrayList<Asteroid> asteroids = new ArrayList<>();      //Container for all asteroids
 
+    /*Alien variable*/
+    private Alien alien;
+    private double alienTimer;                                                                    //Timer to spawn alien
+    private final double ALIEN_SPAWN_TIMER = 15.0d;                     //Spawn alien every 13 seconds
+
     /*Wind variables*/
     private float wind;                                                                                     //Holds current wind status
     private double windTimer;                                                                   //Adds nanoseconds from delta to accumlate real time
 
     /*Mouse Cursor*/
-    private MouseCursor crossHair;
+    private MouseCursor crossHair;                                                      //Mouse cursor change
 
     /*City Buildings*/
     private ArrayList<Building> buildings = new ArrayList<>();
@@ -55,15 +64,20 @@ public class MissileCommand extends SimpleFramework {
     Name; initialize
     Param: N/A
     Desc: Initializes variables, and sets up the buildings list.
-    */
+     */
     @Override
     protected void initialize() {
         super.initialize();
+        gameOver = true;
         astTimer = 0.0d;
         windTimer = 0.0d;
+        alienTimer = 0.0d;
         spawnTimer = SPAWN_TIMER;
         this.wind = 0.0f;
-        this.crossHair = new MouseCursor((int) appWorldWidth / 2, (int) appWorldHeight / 2, getViewportTransform(), mouse, null);
+        //Initilaize the mouse cursor crosshair
+        this.crossHair = new MouseCursor(0, 0, getViewportTransform(), mouse, null);
+        //Set up an initial alien
+        this.alien = new Alien((-1 * (int) (appWorldWidth / 2 + 2200)), 7000, getViewportTransform(), mouse, null);
 
         //Initialize the buildings
         for (int i = 0; i < NUM_BUILDINGS; i++) {
@@ -79,7 +93,7 @@ public class MissileCommand extends SimpleFramework {
     Name; disableCursor
     Param: N/A
     Desc: Disables the default cursor to allow for the crosshair one to be drawn
-    */
+     */
     public void disableCursor() {
         Toolkit tk = Toolkit.getDefaultToolkit();
         Image image = tk.createImage("");
@@ -94,30 +108,46 @@ public class MissileCommand extends SimpleFramework {
     Param: float delta
     Desc: Updates the cursor, to be set to a crosshair, also
     allows for processing of hit detection via the asteroids method.
-    */
+    Also starts the game via spacebar.
+     */
     @Override
     protected void processInput(float delta) {
         super.processInput(delta);
+        if (keyboard.keyDownOnce(KeyEvent.VK_SPACE) && gameOver) {
+            this.gameOver = false;
+        }
         crossHair.processInput(getWorldMousePosition());
+
+        alien.processInput(getWorldMousePosition());
 
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).processInput(getWorldMousePosition());
         }
+
     }
 
     /*
     Name; updateObjects
     Param: float delta
-    Desc: This method calls invokes specific class methods to update the objects. 
-    */
+    Desc: This method calls invokes specific class methods to update the objects. It
+    will also check if the game is currently over or not allowing processing to be performed.
+     */
     @Override
     protected void updateObjects(float delta) {
         crossHair.updateObjects(delta, getViewportTransform(), appWorldWidth, appWorldHeight);
 
-        asteroidsUpdate(delta);
-        buildingsUpdate(delta);
-        checkCollisions();
+        if (!gameOver) {
+            asteroidsUpdate(delta);
+            buildingsUpdate(delta);
+            alienUpdate(delta);
+            checkCollisions();
+        }
 
+        //If all buildings are destroyed, the game is over
+        if (buildings.isEmpty()) {
+            gameOver = true;
+            reset();
+        }
     }
 
     /*
@@ -131,7 +161,7 @@ public class MissileCommand extends SimpleFramework {
     past the bottom of the screen. Score updating is done
     via this method as well, simply because the asteroids are a
     crucial object in this program.
-    */
+     */
     public void asteroidsUpdate(float delta) {
         //Timer to hold clock information
         astTimer += delta;
@@ -181,8 +211,6 @@ public class MissileCommand extends SimpleFramework {
             if (asteroids.get(i).isShotDown()) {
                 if (buildings.size() > 0) {
                     score = ((score + 1) + buildings.size());
-                }else {
-                    score = score + 1;
                 }
                 asteroids.remove(i);
             }
@@ -193,20 +221,32 @@ public class MissileCommand extends SimpleFramework {
     Name; building update
     Param: float delta
     Desc: Updates the buildings, basically just allowing scaling via the viewport ratio
-    */
+     */
     public void buildingsUpdate(float delta) {
         for (int i = 0; i < buildings.size(); i++) {
             buildings.get(i).updateObjects(delta, getViewportTransform(), appWorldWidth, appWorldHeight);
         }
 
     }
+
+    public void alienUpdate(float delta) {
+        alienTimer += delta;
+        if (alienTimer > ALIEN_SPAWN_TIMER) {
+            this.alien = new Alien((-1 * (int) (appWorldWidth / 2 + 2200)), 0, getViewportTransform(), mouse, null);
+
+            alienTimer = 0;
+        }
+        alien.updateObjects(delta, getViewportTransform(), (appWorldWidth), appWorldHeight);
+
+    }
+
     /*
     Name; checkCollision
     Param: N/A
     Desc: Checks all asteroids against a buildings left and right x values, as well as
     an asteroid y value to so see if it passes through and collides with a building.
-    If it does, then remove that building.
-    */
+    If it does, then remove that building. Checks for and resets alien if it is shot down.
+     */
     public void checkCollisions() {
         for (int i = 0; i < asteroids.size(); i++) {
             for (int j = 0; j < buildings.size(); j++) {
@@ -214,6 +254,16 @@ public class MissileCommand extends SimpleFramework {
                     buildings.remove(j);
                 }
             }
+        }
+
+        //If alien is shot down, relocate it, add +100 to score, and give a random starting y value. 
+        if (alien.isShotDown()) {
+            score += 100;
+            alien.setShotDown(false);
+            alien.setX(appWorldWidth / 2 + 2200);
+            //Y set to top half of screen
+            int rng = (int) ((appWorldHeight / 2) + 4000) + (int) (Math.random() * ((appWorldHeight - 2500) - (-1 * (appWorldHeight / 2) + 4000) + 1));
+            alien.setY(rng);
         }
     }
 
@@ -223,20 +273,23 @@ public class MissileCommand extends SimpleFramework {
     Desc: Draws up the wind, the score, and building multiplier. 
     Will also make the render method calls to update the cursor,
     asteroids, and buildings. 
-    */
+     */
     @Override
     protected void render(Graphics g) {
         super.render(g);
-        
+
         g.setColor(Color.GREEN);
         String w = String.format("%.2f", wind);
         g.drawString("Wind: " + w, 20, 20);
         g.drawString("Score: " + score, 20, 40);
         g.drawString("Building Multiplier: " + buildings.size(), 20, 60);
+        if (gameOver) {
+            g.drawString("Press space bar to start", 20, 80);
+        }
 
         //Render the mouse crosshair
         crossHair.render(g);
-        
+
         //Render asteroids
         for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).render(g);
@@ -245,6 +298,24 @@ public class MissileCommand extends SimpleFramework {
         for (int i = 0; i < buildings.size(); i++) {
             buildings.get(i).render(g);
         }
+
+        //Render alien
+        alien.render(g);
+
+    }
+
+    /*
+    Name: reset
+    Param: N/A
+    Desc: Resets basic variables to allow for a new to begin. 
+     */
+    public void reset() {
+        score = 0;
+        buildingSpawnX = -24000;
+        buildingSpawnY = -15000;
+        asteroids.clear();
+        buildings.clear();
+        initialize();
     }
 
     @Override
