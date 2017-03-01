@@ -23,7 +23,7 @@ public class Alien extends VectorObject {
     private void initialize() {
 
         //Alien spaceship polygon
-        polygon = new Vector2f[]{new Vector2f(-2000, 0), new Vector2f(2000, 0)};
+        polygon = new Vector2f[]{new Vector2f(-2000, 0), new Vector2f(-1300, 0), new Vector2f(-1000, 1000), new Vector2f(1000, 1000), new Vector2f(1300, 0), new Vector2f(2000, 0)};
         //Translation variables
         this.tx = spawnX;
         this.ty = spawnY;
@@ -44,7 +44,7 @@ public class Alien extends VectorObject {
 
         //Check if mouse within bounds, if so, kill it
         if (mouse.buttonDown(MouseEvent.BUTTON1)) {
-            if (m.x < this.tx + 2000 && m.x > this.tx - 2000 && m.y < this.ty + 2000 && m.y > this.ty - 2000) {
+            if (m.x < this.tx + 1300 && m.x > this.tx - 1300 && m.y < this.ty + 1000 && m.y > this.ty - 1000) {
                 this.shotDown = true;
             }
         }

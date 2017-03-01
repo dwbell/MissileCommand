@@ -5,13 +5,11 @@ import java.awt.Graphics;
 
 public class Building extends VectorObject {
 
-    private boolean isAlive;                                //Is it alive?
     private int leftBound;                                  //Bound left for collision
     private int rightBound;                              //Bound right for collision
 
     public Building(int spawnX, int spawnY, Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
         super(spawnX, spawnY, viewport, mouse, keyboard);
-        this.isAlive = true;
         this.leftBound = spawnX - 1500;
         this.rightBound = spawnX + 1500;
 
@@ -23,7 +21,7 @@ public class Building extends VectorObject {
     Param: N/A
     Desc: Sets up the building vector array, its x,y location and the world
     matrix for transforms.
-    */
+     */
     private void initialize() {
         //Building shape, centered to 0,0, that are 3000 units long, so 10 buildings can be evenly placed on screen
         polygon = new Vector2f[]{new Vector2f(-1500, 0), new Vector2f(-1500, 2000), new Vector2f(-500, 2000), new Vector2f(-500, 1000),
@@ -42,7 +40,7 @@ public class Building extends VectorObject {
     Name; processInput
     Param: Vector2f m
     Desc: Not needed
-    */
+     */
     @Override
     public void processInput(Vector2f m) {
 
@@ -53,7 +51,7 @@ public class Building extends VectorObject {
     Param: float delta: time, Matrix3x3f viewport: viewport scalar, 
     float width: appWorldWidth, float height: appWorldHeight
     Desc: Applies transforms to the buildings (scalar transforms)
-    */
+     */
     @Override
     public void updateObjects(float delta, Matrix3x3f viewport, float width, float height) {
 
@@ -67,7 +65,7 @@ public class Building extends VectorObject {
     Name; render
     Param: Graphics g
     Desc: Renders the buildings. 
-    */
+     */
     @Override
     public void render(Graphics g) {
         g.setColor(Color.GREEN);
@@ -85,17 +83,17 @@ public class Building extends VectorObject {
     Param: N/A
     Desc: Getter to return buildings individiaul
     left bound x coordinate
-    */
+     */
     public int getLeftBound() {
         return this.leftBound;
     }
-    
+
     /*
     Name; getRightBound
     Param: N/A
     Desc: Getter to return buildings individiaul
     right bound x coordinate
-    */
+     */
     public int getRightBound() {
         return this.rightBound;
     }

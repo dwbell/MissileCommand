@@ -229,11 +229,17 @@ public class MissileCommand extends SimpleFramework {
 
     }
 
+    
+    /*
+    Name: alienUpdate
+    Param: float delta
+    Desc: updates the single alien object by its time limit. And performs
+    the typical updates in order to manipulate the object.
+    */
     public void alienUpdate(float delta) {
         alienTimer += delta;
         if (alienTimer > ALIEN_SPAWN_TIMER) {
             this.alien = new Alien((-1 * (int) (appWorldWidth / 2 + 2200)), 0, getViewportTransform(), mouse, null);
-
             alienTimer = 0;
         }
         alien.updateObjects(delta, getViewportTransform(), (appWorldWidth), appWorldHeight);
