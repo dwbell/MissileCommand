@@ -1,5 +1,9 @@
 package pkg.missile;
 
+import pkg.missile.vector.vectorobjects.MouseCursor;
+import pkg.missile.vector.vectorobjects.Building;
+import pkg.missile.vector.vectorobjects.Asteroid;
+import pkg.missile.vector.vectorobjects.Alien;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;

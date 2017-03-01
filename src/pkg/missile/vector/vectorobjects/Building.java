@@ -1,7 +1,12 @@
-package pkg.missile.framework;
+package pkg.missile.vector.vectorobjects;
 
+import pkg.missile.vector.VectorObject;
 import java.awt.Color;
 import java.awt.Graphics;
+import pkg.missile.framework.KeyboardInput;
+import pkg.missile.framework.Matrix3x3f;
+import pkg.missile.framework.RelativeMouseInput;
+import pkg.missile.framework.Vector2f;
 
 public class Building extends VectorObject {
 
