@@ -5,51 +5,71 @@ import java.awt.Graphics;
 
 public class MouseCursor extends VectorObject {
 
-    private Vector2f[] polycpy;
-
     public MouseCursor(int spawnX, int spawnY, Matrix3x3f viewport, RelativeMouseInput mouse, KeyboardInput keyboard) {
         super(spawnX, spawnY, viewport, mouse, keyboard);
         initialize();
-
     }
 
+    /*
+    Name; initialize
+    Param: N/A
+    Desc: Sets up the crosshair cursor, its starting position and
+    the velocity and world vectors. 
+     */
     private void initialize() {
-        //Crosshair cursor
-        this.polygon = new Vector2f[]{new Vector2f(-5, 0), new Vector2f(0, 0), new Vector2f(0, -5),
-            new Vector2f(0, 0), new Vector2f(5, 0), new Vector2f(0, 0), new Vector2f(0, 5)};
+
+        //Cross Hair Cursor
+        polygon = new Vector2f[]{new Vector2f(-500, 0), new Vector2f(0, 0), new Vector2f(0, -500), new Vector2f(0, 0), new Vector2f(500, 0), new Vector2f(0, 0), new Vector2f(0, 500), new Vector2f(0, 0)};
+        //Translation variables
+        this.tx = spawnX;   //Set to center initially
+        this.ty = spawnY;   //Set to center initially
+        this.velocity = new Vector2f();
+
+        //World initialize
         this.world = new Matrix3x3f();
 
     }
 
+    /*
+    Name; processInput
+    Param: Vector2f m
+    Desc: This takes the mouses world position and applies it to the transform X
+    and transform Y variables. 
+     */
     @Override
     public void processInput(Vector2f m) {
         this.tx = m.x;
         this.ty = m.y;
-        System.out.println(m.x);
-        System.out.println(m.y);
+
     }
 
+    /*
+    Name; updateObjects
+    Param: float delta: time, Matrix3x3f viewport: viewport scaler,
+    float width: appWorldWidth, float height appWorldHeight
+    Desc: Applies the transforms to the mouse cursor crosshair. 
+     */
     @Override
     public void updateObjects(float delta, Matrix3x3f viewport, float width, float height) {
-        this.viewport = viewport;
+
+        //Translations
+        world = Matrix3x3f.translate(tx, ty);
+        //Multiply by viewport scalar
+        world = world.mul(viewport);
     }
 
+    /*
+    Name; render
+    Param: Graphics g
+    Desc: Renders the mouse crosshair.
+     */
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.BLACK);
-        world = viewport.mul(Matrix3x3f.translate(tx, ty));
-        drawPolygon(g, polygon);
-
-    }
-
-    protected void onWindowClosing() {
-    }
-
-    private void drawPolygon(Graphics g, Vector2f[] polygon) {
-        Vector2f P;
-        Vector2f S = polygon[polygon.length - 1];
+        g.setColor(Color.GREEN);
+        Vector2f S = world.mul(polygon[polygon.length - 1]);
+        Vector2f P = null;
         for (int i = 0; i < polygon.length; ++i) {
-            P = polygon[i];
+            P = world.mul(polygon[i]);
             g.drawLine((int) S.x, (int) S.y, (int) P.x, (int) P.y);
             S = P;
         }
