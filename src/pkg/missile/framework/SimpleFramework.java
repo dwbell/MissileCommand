@@ -178,7 +178,7 @@ public class SimpleFramework extends JFrame implements Runnable {
         g.setFont(appFont);
         g.setColor(appFPSColor);
         frameRate.calculate();
-        g.drawString(frameRate.getFrameRate(), 20, 20);
+        //g.drawString(frameRate.getFrameRate(), 20, 20);
     }
 
     protected void onWindowClosing() {
